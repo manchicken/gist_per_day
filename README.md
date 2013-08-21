@@ -1,4 +1,4 @@
-randum_stuff
+GistPerDay
 ============
 
-Because random stuff needs version control, too. You'll see a lot of this on my gists, too.
+I'm going to set a goal of submitting one gist per day for 30 days, starting on August 21st.
