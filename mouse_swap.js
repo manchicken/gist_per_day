@@ -1,0 +1,8 @@
+obsS=WScript.CreateObject("WScript.Shell")
+obsS.Run("control mouse", 5)
+WScript.sleep(1000)
+obsS.AppActivate("Mouse")
+WScript.Sleep(300)
+obsS.Sendkeys(" ")
+WScript.Sleep(123)
+obsS.SendkEys("{Enter}")
