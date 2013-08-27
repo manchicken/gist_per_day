@@ -24,6 +24,7 @@ def add_record_to_mongo(mongo, record):
   global global_coll
   
   mongo_bits = mongo.split('.')
+  if len(mongo_bits) != 2: usage('Mongo Instance format: DBNAME.COLLECTIONNAME')
   mongo_db = mongo_bits[0]
   mongo_coll = mongo_bits[1]
   print 'Load a record!\n'
