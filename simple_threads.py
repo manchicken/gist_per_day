@@ -4,7 +4,6 @@ import sys
 import threading
 
 def process_number(func,input_list):
-  print 'foo!'
   x = 0
   n = 0
   for one in input_list:
