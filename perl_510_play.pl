@@ -29,6 +29,12 @@ sub test_named_captures {
     return $to_return;
 }
 
+sub test_bad_exception_localization {
+  eval {
+    die 'abc123';
+  }; is($@, 'abc123', 'Verify we got abc123 for our exception...');
+}
+
 is( test_state(3), 3, 'Verify that test_state(3) returns 3...' );
 is( test_state(5), 3,
     'Verify that the second call to test_state() returns 3 still...' );
@@ -36,3 +42,5 @@ is( test_named_captures('3FOO'),
     3, 'Verify that test_named_captures() returns 3...' );
 is( test_named_captures('FOO3'),
     undef, 'Verify that test_named_captures() returns undef...' );
+
+test_bad_exception_localization();
