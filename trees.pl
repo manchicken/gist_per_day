@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;use warnings;
 
-use Test::More tests => 4;
+use Test::More tests => 22;
 use Data::Dumper;
 
 {
@@ -123,7 +123,6 @@ use Data::Dumper;
     my ($self) = @_;
 
     my $l = (defined($self->{left}))?$self->{left}:undef;
-    my $r = (defined($self->{right}))?$self->{right}:undef;
     my $llH = (defined($l->{left}))?$l->{left}->{height}:0;
     my $lrH = (defined($l->{right}))?$l->{right}->{height}:0;
 
@@ -137,7 +136,6 @@ use Data::Dumper;
   sub rotate_left {
     my ($self) = @_;
 
-    my $l = (defined($self->{left}))?$self->{left}:undef;
     my $r = (defined($self->{right}))?$self->{right}:undef;
     my $rlH = (defined($r->{left}))?$r->{left}->{height}:0;
     my $rrH = (defined($r->{right}))?$r->{right}->{height}:0;
