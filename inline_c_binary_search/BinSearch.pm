@@ -72,7 +72,7 @@ SV* _c_bin_search(SV* needle, AV* haystack) {
   }
   
   left = 0;
-  right = haystack_size-1;
+  right = haystack_size;
   while (left < right) {
     // Pick where to look
     if (left+1 == right) { // This handles the race condition of only two items
