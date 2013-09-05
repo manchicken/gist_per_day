@@ -21,7 +21,7 @@ say "I found $found.";
 $found = do_binsearch('chicken', @empty) // 'undef';
 say "I found $found.";
 
-$found = do_binsearch(9, @ints) // 'undef';
+$found = do_binsearch(1, @ints) // 'undef';
 say "I found $found.";
 
 $found = do_binsearch('chicken', @ints) // 'undef';
