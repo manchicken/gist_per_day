@@ -6,7 +6,7 @@ use POSIX qw/ceil/;
 use Benchmark qw/:all/;
 use Readonly;
 
-sub INIT {
+sub BEGIN {
   if (scalar(@ARGV) != 2) {
     die "Usage: $0 NUMTESTS SIZEOFLIST";
   }
@@ -15,10 +15,10 @@ sub INIT {
 Readonly my $TEST_LIMIT => $ARGV[0];
 Readonly my $N_SIZE => $ARGV[1];
 
-sub binsearch {
-  my ($needle, $haystack, $is_sorted) = @_;
+sub binsearch_with_sort {
+  my ($needle, $haystack) = @_;
   
-  my $sorted = (defined($is_sorted) && $is_sorted)? $haystack : [sort @{$haystack}];
+  my $sorted = [sort @{$haystack}];
   
   my $left = 0;
   my $right = scalar(@{$sorted});
@@ -45,6 +45,39 @@ sub binsearch {
   
   if ($sorted->[$left] eq $needle) {
     return $sorted->[$left];
+  }
+  
+  return undef;
+}
+
+sub binsearch_without_sort {
+  my ($needle, $haystack) = @_;
+  
+  my $left = 0;
+  my $right = scalar(@{$haystack});
+  my $look = undef;
+  
+  if ($right <= 1) {
+    return $haystack->[$right] if ($haystack->[$right] eq $needle);
+    return undef;
+  }
+  
+  while ($left < $right) {
+    $right = $left if ($left + 1 == $right);
+    $look = ceil(($left+$right)/2);
+    
+    my $c = ($haystack->[$look] cmp $needle);
+    if ($c < 0) {
+      $left = $look;
+    } elsif ($c > 0) {
+      $right = $look;
+    } else {
+      return $haystack->[$look];
+    }
+  }
+  
+  if ($haystack->[$left] eq $needle) {
+    return $haystack->[$left];
   }
   
   return undef;
@@ -79,13 +112,13 @@ sub my_assert {
   $failcount += 1 unless ($exp eq $got);
 }
 
-timethis($TEST_LIMIT, sub { my $foo = $list[rand(scalar(@list)-1)]; my_assert($foo, binsearch($foo, \@list, 0)); });
+timethis($TEST_LIMIT, sub { my $foo = $list[rand(scalar(@list)-1)]; my_assert($foo, binsearch_with_sort($foo, \@list)); });
 say "I had $failcount fails for binsearch() with unsorted input.";
 $failcount = 0;
 timethis($TEST_LIMIT, sub { my $foo = $list[rand(scalar(@list)-1)]; my_assert($foo, nsearch($foo, \@list))});
 say "I had $failcount fails for nsearch().";
 $failcount = 0;
 @list = sort @list;
-timethis($TEST_LIMIT, sub { my $foo = $list[rand(scalar(@list)-1)]; my_assert($foo, binsearch($foo, \@list, 1)); });
+timethis($TEST_LIMIT, sub { my $foo = $list[rand(scalar(@list)-1)]; my_assert($foo, binsearch_without_sort($foo, \@list)); });
 say "I had $failcount fails for binsearch() with *sorted* input.";
 $failcount = 0;
