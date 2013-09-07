@@ -10,9 +10,9 @@ if ($in !~ m/^-?[0-9]+$/) {
   die "Usage: $0 INTEGER (and it really must be an integer)";
 }
 
-my $remainder = (abs($in) % 10);
-if ($remainder == 4) {
+if (($in % 10) == 4) {
   print "$in ends in 4!\n";
 } else {
   print "$in doesn't end in 4!\n";
 }
+
