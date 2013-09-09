@@ -10,6 +10,7 @@ _THREAD_LIMIT = 10
 print_lock = threading.Lock()
 
 global_mongo = MongoClient(max_pool_size=_THREAD_LIMIT)
+tsem = threading.Semaphore(value=_THREAD_LIMIT)
 
 def usage(msg):
   if msg != None:
@@ -42,6 +43,8 @@ def add_record_to_mongo(record,mongo):
     mycoll.insert(record)
   except:
     traceback.print_exc()
+  finally:
+    tsem.release()
 
 def run_record(incsv, mongo):
   with print_lock: print('Starting thread...')
@@ -51,16 +54,15 @@ def run_record(incsv, mongo):
     with print_lock: add_record_to_mongo(record, mongo)
 
 def run_csv_file(csvfile, mongo):
-  tsem = threading.Semaphore(value=_THREAD_LIMIT)
   all_threads = []
   
   print('Gonna load the CSV file "{csvfile}" into mongodb "{mongo}"\n'.format(csvfile=csvfile, mongo=mongo))
   with open(csvfile,'rb') as incsv:
-    with tsem:
-      with print_lock: print 'Thread is available...'
-      t = threading.Thread(target=run_record, args=(incsv,mongo))
-      t.run()
-      all_threads.append(t)
+    tsem.acquire()
+    with print_lock: print 'Thread is available...'
+    t = threading.Thread(target=run_record, args=(incsv,mongo))
+    t.run()
+    all_threads.append(t)
   
   # Join all threads
   for t in all_threads:
