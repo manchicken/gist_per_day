@@ -7,7 +7,6 @@ import traceback
     
 _THREAD_LIMIT = 10
 
-mongo_lock = threading.Lock()
 print_lock = threading.Lock()
 
 global_mongo = MongoClient(max_pool_size=_THREAD_LIMIT)
@@ -23,8 +22,7 @@ def usage(msg):
   print('      -m|--mongo=MONGOINSTANCE ... The mongo instance to load the file into\n')
   sys.exit(0)
 
-def add_record_to_mongo(mongo, record):
-  global global_mongo
+def add_record_to_mongo(record,mongo):
   print('CALLED!')
   print('Load a record!\n')
   pprint.pprint(record)
@@ -39,16 +37,13 @@ def add_record_to_mongo(mongo, record):
     
     global_mongo.end_request()
     
-    # Now let's insert
+    # Now let's insert  
     print 'DB: {db} and COLL: {coll}'.format(db=mydb,coll=mycoll)
-    # mycoll.insert(record)
+    mycoll.insert(record)
   except:
     traceback.print_exc()
 
 def run_record(incsv, mongo):
-  global mongo_lock
-  global print_lock
-  
   with print_lock: print('Starting thread...')
   
   parsed = csv.DictReader(incsv, delimiter=',', quotechar='"')
@@ -56,8 +51,6 @@ def run_record(incsv, mongo):
     with print_lock: add_record_to_mongo(record, mongo)
 
 def run_csv_file(csvfile, mongo):
-  global print_lock
-  
   tsem = threading.Semaphore(value=_THREAD_LIMIT)
   all_threads = []
   
