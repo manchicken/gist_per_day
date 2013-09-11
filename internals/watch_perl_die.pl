@@ -3,20 +3,35 @@ use 5.010;
 use strict;
 use warnings;
 
-my ($sig,$msg) = @ARGV;
+use POSIX;
+use FindBin qw/$Bin/;
+use IO::File;
 
+my ( $sig, $msg ) = @ARGV;
+
+# This is our signal handler. We want to drop a head.dat file
+# as a way of detecting that the child died.
 sub death_throes {
-  say STDERR "Caught signal '$sig': $msg";
+  say STDERR "CHILD HERE: Caught signal '$sig': $msg";
+  my $head = IO::File->new( "$Bin/head.dat", O_CREAT )
+    || die 'Failed to drop a head! ' . $!;
+  $head->print($$);
   exit(0);
 }
 
+# This program should always receive a signal, so this is just in case
 my $suicide_counter = 0;
 
-$SIG{$sig} = \&death_throes;
+# Bind to our requested signal
+local $SIG{$sig} = \&death_throes;
 
-# First, let's try to bind
-while (1) {
-  exit 1 unless $suicide_counter++ < 5;
-  print STDERR "Hi!\t";
+# Prove that we're bound to that signal
+die "SIGNAL APPEARS UNBOUND!" unless ( $SIG{$sig} == \&death_throes );
+
+# Wait for a signal (or suicide)
+while ( 1 && $suicide_counter++ < 5 ) {
   sleep 5;
 }
+
+# Exit in the case of suicide.
+exit(0);
