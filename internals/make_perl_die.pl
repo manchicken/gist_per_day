@@ -55,6 +55,18 @@ sub make_ready_the_reaper {
   return sub {
     $bloody = 1;
     waitpid( $lamb, WNOHANG );
+    
+    my $retstat = $?;
+    
+    if (WIFEXITED($retstat)) {
+      $retstat = WEXITSTATUS($retstat);
+      say STDERR "TEST $signame: Exited with status $retstat";
+    } elsif (WIFSIGNALED($retstat)) {
+      $retstat = WTERMSIG($retstat);
+      say STDERR "TEST $signame: Terminated with signal $retstat";
+    } else {
+      warn "TEST $signame: WTF?! $retstat is the exit code, but it's not coming up as a exit or a signal termination.";
+    }
   };
 }
 
@@ -67,6 +79,7 @@ my %tests = (
   q{TERM} => { sig => SIGTERM, catchable => 1 },
   q{SEGV} => { sig => SIGSEGV, catchable => 1 },
   q{STOP} => { sig => SIGSTOP, catchable => 0 },
+  q{CONT} => { sig => SIGCONT, catchable => 1 },
   q{ABRT} => { sig => SIGABRT, catchable => 1 },
   q{PIPE} => { sig => SIGPIPE, catchable => 1 },
   q{CHLD} => { sig => SIGCHLD, catchable => 1 },

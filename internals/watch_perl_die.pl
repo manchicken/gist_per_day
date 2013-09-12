@@ -16,7 +16,7 @@ sub death_throes {
   my $head = IO::File->new( "$Bin/head.dat", O_CREAT )
     || die 'Failed to drop a head! ' . $!;
   $head->print($$);
-  exit(0);
+  exit(1);
 }
 
 # This program should always receive a signal, so this is just in case
