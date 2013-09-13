@@ -119,12 +119,6 @@ use Test::More;
     return $IS_NONE;
   }
 
-  sub _increment_item_count {
-    my ($self) = @_;
-
-    return ++$self->[$OIDX_COUNT];
-  }
-
   sub store_pair {
     my ( $self, $pair ) = @_;
 
@@ -144,7 +138,7 @@ use Test::More;
         my $new_ary =
           [ sort { $a->get_key cmp $b->get_key } ( $existing, $pair ) ];
         $self->[$OIDX_ITEMS]->[$idx] = $new_ary;
-        $self->_increment_item_count;
+        $self->[$OIDX_COUNT] += 1;
       }
 
       # We have an existing list of items
@@ -165,13 +159,13 @@ use Test::More;
         push @{$existing}, $pair;
         $self->[$OIDX_ITEMS]->[$idx] =
           [ sort { $a->get_key cmp $b->get_key } @{$existing} ];
-        $self->_increment_item_count;
+        $self->[$OIDX_COUNT] += 1;
       }
 
       # We don't have any existing items at this index
     } else {
       $self->[$OIDX_ITEMS]->[$idx] = $pair;
-      $self->_increment_item_count;
+      $self->[$OIDX_COUNT] += 1;
     }
 
     # If we're getting a bit too big, grow.
@@ -247,6 +241,7 @@ my $h1 = HashMap->new();
 for my $n ( 0 .. $TEST_HASH_SIZE - 1 ) {
   my $x = 0;
 
+  ## THIS IS THE ONLY NATIVE PERL HASH IN THE WHOLE PROGRAM
   my $foo = { one => 1, 2 => 'two', n => $n };
 
   ok(
