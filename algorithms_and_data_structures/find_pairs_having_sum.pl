@@ -3,7 +3,7 @@ use 5.010;
 use strict;
 use warnings;
 use POSIX qw/ceil/;
-use Test::More tests => 403;
+use Test::More tests => 404;
 
 sub bin_search {
   my ($needle, $haystack) = @_;
@@ -78,3 +78,5 @@ for ( 1 .. 100 ) {
   is(bin_search($pair[0], \@list1), $pair[0], 'Verify the 0th item in the pair is contained in list 1...');
   is(bin_search($pair[1], \@list2), $pair[1], 'Verify the 1th item in the pair is contained in list 2...');
 }
+
+ok(!defined find_pair(-1, \@list1, \@list2), 'Verify we get nothing back when the item isn\'t found...');
