@@ -18,7 +18,7 @@ use Test::More;
     my $self = [ undef, $key, $value ];
 
     bless $self, $pkg;
-    return $self unless defined $key;
+    if (!defined $key) { return $self; }
 
     $self->[$HHASH] = HashMap->hashval($key);
 
@@ -58,7 +58,7 @@ use Test::More;
   sub hashval {
     my ( $self, $value ) = @_;
 
-    return unpack( '%32A*', $value );
+    return unpack '%32A*', $value;
   }
 
   sub new {
@@ -80,9 +80,7 @@ use Test::More;
     $self->[$OIDX_COUNT]    = 0;
 
     for my $entry ( @{$cur_entries} ) {
-      next
-        unless defined $entry
-        and ref($entry);    # Skip if it's not defined or not a ref
+      if (!defined $entry || !ref $entry) { next; }   # Skip if it's not defined or not a ref
 
   # If we have duplicates then this won't be a HashPair, it'll be an arrayref.
   # In that case, iterate through each of the dups and re-store it.
@@ -233,9 +231,8 @@ use Test::More;
 };
 
 Readonly my $TEST_HASH_SIZE => 500;
-plan tests => ( ( $TEST_HASH_SIZE * 8 ) + 1 );
-
-# use Data::Dumper;
+Readonly my $TESTS_PER_ITEM => 8;
+plan tests => ( ( $TEST_HASH_SIZE * $TESTS_PER_ITEM ) + 1 );
 
 my $h1 = HashMap->new();
 for my $n ( 0 .. $TEST_HASH_SIZE - 1 ) {
