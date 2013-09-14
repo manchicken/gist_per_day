@@ -3,7 +3,7 @@ use 5.010;
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+use Test::More tests => 4;
 
 sub newV {
   my ($name) = @_;
@@ -120,4 +120,9 @@ is(scalar @pathsAB, 3, 'Verify we have four paths between A and B...');
 # See what happens for a
 my @pathsAA = find_path($g, qw/A A/);
 for my $path (@pathsAA) { say 'Path: '.join ', ',@{$path}; }
-is(scalar @pathsAA, 1, 'Verify we have only the one path');
+is(scalar @pathsAA, 1, 'Verify we have only the one path for A to A...');
+
+# Try going from B to G
+my @pathsBG = find_path($g, qw/B G/);
+for my $path (@pathsBG) { say 'Path: '.join ', ',@{$path}; }
+is(scalar @pathsBG, 3, 'Verify we have only the three paths between B and G...');
