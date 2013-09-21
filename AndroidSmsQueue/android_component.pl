@@ -17,9 +17,11 @@ my $android = Android->new();
 my $info = HTTP::Tiny->new->get($DEQUEUE_URL);
 
 if ($info->{content} eq 'EMPTY') {
+  $android->ttsSpeak("Queue is empty.");
   print "Nothing was in the queue.\n";
   exit 0;
 }
 
 my $obj = decode_json($info->{content});
 $android->smsSend($obj->{to}, $obj->{message});
+$android->ttsSpeak("Sent Message: ".$obj->{message});
