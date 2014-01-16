@@ -4,7 +4,7 @@ use warnings;
 use 5.010;
 use English;
 
-for ( 1 .. 5 ) {
+for ( 0 .. 5 ) {
     next if ( fork() > 0 ); # Remember, fork returns zero to the child, and the PID of the child to the parent.
     
     identify_yourself(); # This sends the child process on its merry way.
